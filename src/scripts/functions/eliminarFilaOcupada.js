@@ -1,31 +1,28 @@
 /* busca por cada fila todas las casillas ocupadas, en caso de que esten ocupadas completamente
 el programa eliminara esa fila y correra las filas ocupadas una casilla hacia abajo */
-export function eliminarFilaOcupada(filaY, casillasOcupadas, grillas) {
-  const filaOcupada = casillasOcupadas.filter(
-    (element) => element.posY == filaY
-  );
-
-  if (filaOcupada.length == 15) {
-    casillasOcupadas = casillasOcupadas.filter(
-      (element) => element.posY < filaY
+export function eliminarFilaOcupada(HEIGHT_GAME, casillasOcupadas, WIDTH_GAME) {
+  let indice = HEIGHT_GAME - 1;
+  while (indice != 0) {
+    const filaOcupada = casillasOcupadas.filter(
+      (element) => element.posY == indice
     );
 
-    // reorganizamos las casillas para que pasen a estar ocupadas las que deben de estar ocupadas
-    grillas.forEach((element) => {
-      if (
-        casillasOcupadas.some(
-          (e) => e.posY + 1 == element.posY && e.posX == element.posX
-        )
-      ) {
-        element.color = "blue";
-        element.ocupado = true;
-      } else {
-        element.ocupado = false;
-        element.color = "green";
-      }
-    });
-    return true;
+    if (filaOcupada.length == WIDTH_GAME) {
+      casillasOcupadas = casillasOcupadas.filter(
+        (element) => element.posY != indice
+      );
+
+      console.log(casillasOcupadas);
+
+      casillasOcupadas.forEach((element) => {
+        if (element.posY < indice) {
+          element.posY = element.posY + 1;
+        }
+      });
+    } else {
+      indice--;
+    }
   }
 
-  return false;
+  return casillasOcupadas;
 }

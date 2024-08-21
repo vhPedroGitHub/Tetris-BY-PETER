@@ -12,8 +12,8 @@ export class T extends Figura {
     ];
   }
 
-  update(velocidadX, velocidadY) {
-    super.update(velocidadX, velocidadY);
+  update(velocidadX, velocidadY, HEIGHT_GAME, WIDTH_GAME) {
+    super.update(velocidadX, velocidadY, HEIGHT_GAME, WIDTH_GAME);
     this.actualizarDibujo();
   }
 

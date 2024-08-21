@@ -12,8 +12,8 @@ export class Figura {
 
   /* En esta funcion el programa detecta si la figura que esta en juego  
   choca con el final o con algunas de los pisos que han formado las otras figuras*/
-  isFinish(grillasOcupadas, casillasADibujar) {
-    if (this.posY + this.colum >= 14) {
+  isFinish(grillasOcupadas, casillasADibujar, HEIGHT_GAME) {
+    if (this.posY + this.colum >= HEIGHT_GAME - 1) {
       return true;
     } else {
       for (let index = 0; index < casillasADibujar.length; index++) {
@@ -77,17 +77,17 @@ export class Figura {
   }
 
   // actualiza los parametros de la figura para dibujarla
-  update(velocidadX, velocidadY) {
+  update(velocidadX, velocidadY, HEIGHT_GAME, WIDTH_GAME) {
     this.posX += velocidadX;
     this.posY += velocidadY;
-    if (this.posX + this.filaRight >= 15) {
-      this.posX = 14 - this.filaRight;
+    if (this.posX + this.filaRight >= WIDTH_GAME - 1) {
+      this.posX = WIDTH_GAME - 1 - this.filaRight;
     }
     if (this.posX - this.filaLeft <= 0) {
       this.posX = 0 + this.filaLeft;
     }
-    if (this.posY + this.colum >= 15) {
-      this.posY = 14 - this.colum;
+    if (this.posY + this.colum >= HEIGHT_GAME - 1) {
+      this.posY = HEIGHT_GAME - 1 - this.colum;
     }
   }
 }

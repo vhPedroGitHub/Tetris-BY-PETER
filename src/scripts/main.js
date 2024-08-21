@@ -2,82 +2,73 @@ import { Grilla } from "./Clases/Grillas";
 import { obtenerFigura } from "./functions/generarFigura";
 import { grillasOcupadas } from "./functions/grillasOcupadas";
 import { eliminarFilaOcupada } from "./functions/eliminarFilaOcupada";
-
+import {
+  manejarTeclaPresionada,
+  detectarEscape,
+  velocidades,
+} from "./functions/modificarVelocidades";
 // canvas
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
-// variables
-const DIMENSIONS_GRILLA = 40;
-const DIMENSIONS_CUADRO = 40;
-let velocidadX = 0;
-let velocidadY = 0;
+// variables y declaracion de constantes
+const CANVAS_DIMENSION = 400;
+const HEIGHT_GAME = 18;
+const WIDTH_GAME = 16;
+const DIMENSIONS_GRILLA = CANVAS_DIMENSION / HEIGHT_GAME;
+const DIMENSIONS_CUADRO = CANVAS_DIMENSION / HEIGHT_GAME;
 
-let velocidadYBajada = 1;
-
-canvas.width = 600;
-canvas.height = 600;
-
-let figuraActual = null;
-let figuraSiguiente = null;
+canvas.width = DIMENSIONS_GRILLA * WIDTH_GAME;
+canvas.height = DIMENSIONS_GRILLA * HEIGHT_GAME;
 
 const figuras = ["cuadrado", "varilla", "T", "lPequena", "lGrande"];
+let figuraActual = obtenerFigura(figuras);
+let figuraSiguiente = obtenerFigura(figuras);
 
 // Dibujamos las grillas y las agregamos en un arrays
 let grillas = [];
 let grillasOcupadasArray = [];
 
-for (let y = 0; y < 15; y++) {
-  for (let x = 0; x < 15; x++) {
-    grillas.push(new Grilla(x, y, "green"));
+for (let y = 0; y < HEIGHT_GAME; y++) {
+  for (let x = 0; x < WIDTH_GAME; x++) {
+    grillas.push(new Grilla(x, y, "green", false));
   }
 }
 
-figuraActual = obtenerFigura(figuras);
-figuraSiguiente = obtenerFigura(figuras);
+// agreagadno los eventos al juego
+document.addEventListener("keydown", (event) => {
+  manejarTeclaPresionada(event, velocidades, figuraActual);
+});
+document.addEventListener("keydown", (event) => {
+  detectarEscape(event, velocidades);
+});
+document
+  .getElementById("bt-d")
+  .addEventListener("click", () => (velocidades.velocidadY = 1));
+document
+  .getElementById("bt-r")
+  .addEventListener("click", () => (velocidades.velocidadX = 1));
+document
+  .getElementById("bt-l")
+  .addEventListener("click", () => (velocidades.velocidadX = -1));
 
-// Agregar evento de tecla presionada al documento
-function manejarTeclaPresionada(event) {
-  // Verificar la tecla presionada
-  switch (event.code) {
-    case "ArrowDown":
-      velocidadY = 1;
-      break;
-    case "ArrowLeft":
-      velocidadX = -1;
-      break;
-    case "ArrowRight":
-      velocidadX = 1;
-      break;
-    case "Space":
-      figuraActual.rotarDibujo();
-      break;
-
-    default:
-      // Ignorar otras teclas
-      break;
-  }
-}
-document.addEventListener("keydown", manejarTeclaPresionada);
-
-function detectarEscape(event) {
-  // Verificamos si la tecla presionada es Escape
-  if (event.key === "Escape" || event.keyCode === 27) {
-    velocidadYBajada = velocidadYBajada == 0 ? 1 : 0;
-  }
-}
-
-// Agregamos un listener para el evento keydown
-document.addEventListener("keydown", detectarEscape);
+document
+  .getElementById("rotate")
+  .addEventListener("click", () => figuraActual.rotarDibujo());
 
 // bucle del juego
 function loop() {
   // actualizando los datos
-  figuraActual.update(velocidadX, velocidadY);
+  figuraActual.update(
+    velocidades.velocidadX,
+    velocidades.velocidadY,
+    HEIGHT_GAME,
+    WIDTH_GAME
+  );
 
   // dibujando los elementos en la pantalla
-  ctx.fillStyle = "#242424";
-  ctx.fillRect(0, 0, 600, 600);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, CANVAS_DIMENSION, CANVAS_DIMENSION);
 
   const casillasADibujar = figuraActual.obtenerCasillasDibujo(
     figuraActual.dibujado
@@ -100,23 +91,26 @@ function loop() {
 
   grillas.forEach((grilla) => grilla.draw(ctx, DIMENSIONS_GRILLA));
 
-  velocidadX = 0;
-  velocidadY = 0;
+  velocidades.velocidadX = 0;
+  velocidades.velocidadY = 0;
 
-  if (figuraActual.isFinish(grillasOcupadasArray, casillasADibujar)) {
+  if (
+    figuraActual.isFinish(grillasOcupadasArray, casillasADibujar, HEIGHT_GAME)
+  ) {
     figuraActual = figuraSiguiente;
     figuraSiguiente = obtenerFigura(figuras);
 
-    grillasOcupadas(grillas, casillasADibujar);
-    let indice = 14;
-    while (indice != 0) {
-      grillasOcupadasArray = grillas.filter((element) => element.ocupado);
-      if (!eliminarFilaOcupada(indice, grillasOcupadasArray, grillas)) {
-        indice--;
-      }
-    }
+    grillasOcupadasArray = grillasOcupadas(
+      grillas,
+      casillasADibujar,
+      grillasOcupadasArray
+    );
 
-    grillasOcupadasArray = grillas.filter((element) => element.ocupado);
+    grillasOcupadasArray = eliminarFilaOcupada(
+      HEIGHT_GAME,
+      grillasOcupadasArray,
+      WIDTH_GAME
+    );
   }
 
   requestAnimationFrame(loop);
@@ -124,4 +118,13 @@ function loop() {
 
 loop();
 
-setInterval(() => figuraActual.update(0, velocidadYBajada), 2000);
+setInterval(
+  () =>
+    figuraActual.update(
+      0,
+      velocidades.velocidadYBajada,
+      HEIGHT_GAME,
+      WIDTH_GAME
+    ),
+  1000
+);

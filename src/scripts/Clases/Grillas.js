@@ -1,10 +1,10 @@
 // Cuadricula
 export class Grilla {
-  constructor(posX, posY, color) {
+  constructor(posX, posY, color, ocupado) {
     this.posX = posX;
     this.posY = posY;
     this.color = color;
-    this.ocupado = false;
+    this.ocupado = ocupado;
   }
 
   draw(ctx, DIMENSIONS_GRILLA) {
