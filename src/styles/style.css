@@ -19,7 +19,7 @@ canvas {
 #botones {
   position: relative;
   width: 200px;
-  height: 150px;
+  height: 120px;
   background-color: black;
   border-radius: 10px;
 }
@@ -28,8 +28,8 @@ canvas {
 #bt-l,
 #bt-r,
 #rotate {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
 }
 
 #bt-d {
