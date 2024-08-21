@@ -7,30 +7,30 @@ export class Grilla {
     this.ocupado = ocupado;
   }
 
-  draw(ctx, DIMENSIONS_GRILLA) {
+  draw(ctx, DIMENSIONS_GRILLA_X, DIMENSIONS_GRILLA_Y) {
     // Establecer el color del borde
     ctx.strokeStyle = "white"; // Color del borde
     // Establecer el grosor del borde
     ctx.lineWidth = 1; // Grosor del borde
     // Dibujar el rectangulo
     ctx.strokeRect(
-      this.posX * DIMENSIONS_GRILLA,
-      this.posY * DIMENSIONS_GRILLA,
-      DIMENSIONS_GRILLA,
-      DIMENSIONS_GRILLA
+      this.posX * DIMENSIONS_GRILLA_X,
+      this.posY * DIMENSIONS_GRILLA_Y,
+      DIMENSIONS_GRILLA_X,
+      DIMENSIONS_GRILLA_Y
     );
   }
 
-  static drawCasillas(casillas, DIMENSIONS_GRILLA, DIMENSIONS_CUADRO, ctx) {
+  static drawCasillas(casillas, DIMENSIONS_GRILLA_X, DIMENSIONS_GRILLA_Y, ctx) {
     casillas.forEach((element) => {
       // Establecer el color de relleno
       ctx.fillStyle = element.color;
       // Dibujar el rectangulo
       ctx.fillRect(
-        element.posX * DIMENSIONS_GRILLA,
-        element.posY * DIMENSIONS_GRILLA,
-        DIMENSIONS_CUADRO,
-        DIMENSIONS_CUADRO
+        element.posX * DIMENSIONS_GRILLA_X,
+        element.posY * DIMENSIONS_GRILLA_Y,
+        DIMENSIONS_GRILLA_X,
+        DIMENSIONS_GRILLA_Y
       );
     });
   }

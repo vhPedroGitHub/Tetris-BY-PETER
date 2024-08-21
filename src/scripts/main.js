@@ -7,19 +7,14 @@ import {
   detectarEscape,
   velocidades,
 } from "./functions/modificarVelocidades";
+import {
+  ajustarDimensiones,
+  dimensiones,
+} from "./functions/ajustesDeDimensiones";
+
 // canvas
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-
-// variables y declaracion de constantes
-const CANVAS_DIMENSION = 400;
-const HEIGHT_GAME = 18;
-const WIDTH_GAME = 16;
-const DIMENSIONS_GRILLA = CANVAS_DIMENSION / HEIGHT_GAME;
-const DIMENSIONS_CUADRO = CANVAS_DIMENSION / HEIGHT_GAME;
-
-canvas.width = DIMENSIONS_GRILLA * WIDTH_GAME;
-canvas.height = DIMENSIONS_GRILLA * HEIGHT_GAME;
 
 const figuras = ["cuadrado", "varilla", "T", "lPequena", "lGrande"];
 let figuraActual = obtenerFigura(figuras);
@@ -29,8 +24,8 @@ let figuraSiguiente = obtenerFigura(figuras);
 let grillas = [];
 let grillasOcupadasArray = [];
 
-for (let y = 0; y < HEIGHT_GAME; y++) {
-  for (let x = 0; x < WIDTH_GAME; x++) {
+for (let y = 0; y < dimensiones.HEIGHT_GAME; y++) {
+  for (let x = 0; x < dimensiones.WIDTH_GAME; x++) {
     grillas.push(new Grilla(x, y, "green", false));
   }
 }
@@ -42,6 +37,8 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("keydown", (event) => {
   detectarEscape(event, velocidades);
 });
+
+// anandiendole funcionalidad a los botones
 document
   .getElementById("bt-d")
   .addEventListener("click", () => (velocidades.velocidadY = 1));
@@ -56,19 +53,30 @@ document
   .getElementById("rotate")
   .addEventListener("click", () => figuraActual.rotarDibujo());
 
+// Añadir un event listener para detectar cambios en el tamaño de la ventana
+ajustarDimensiones(dimensiones);
+window.addEventListener("resize", () => ajustarDimensiones(dimensiones));
+
 // bucle del juego
 function loop() {
+  canvas.width = dimensiones.CANVAS_DIMENSION_X;
+  canvas.height = dimensiones.CANVAS_DIMENSION_Y;
   // actualizando los datos
   figuraActual.update(
     velocidades.velocidadX,
     velocidades.velocidadY,
-    HEIGHT_GAME,
-    WIDTH_GAME
+    dimensiones.HEIGHT_GAME,
+    dimensiones.WIDTH_GAME
   );
 
   // dibujando los elementos en la pantalla
   ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, CANVAS_DIMENSION, CANVAS_DIMENSION);
+  ctx.fillRect(
+    0,
+    0,
+    dimensiones.CANVAS_DIMENSION_X,
+    dimensiones.CANVAS_DIMENSION_Y
+  );
 
   const casillasADibujar = figuraActual.obtenerCasillasDibujo(
     figuraActual.dibujado
@@ -77,25 +85,35 @@ function loop() {
   figuraActual.drawCasillas(
     casillasADibujar,
     "red",
-    DIMENSIONS_GRILLA,
-    DIMENSIONS_CUADRO,
+    dimensiones.DIMENSIONS_GRILLA_X,
+    dimensiones.DIMENSIONS_GRILLA_Y,
     ctx
   );
 
   Grilla.drawCasillas(
     grillasOcupadasArray,
-    DIMENSIONS_GRILLA,
-    DIMENSIONS_CUADRO,
+    dimensiones.DIMENSIONS_GRILLA_X,
+    dimensiones.DIMENSIONS_GRILLA_Y,
     ctx
   );
 
-  grillas.forEach((grilla) => grilla.draw(ctx, DIMENSIONS_GRILLA));
+  grillas.forEach((grilla) =>
+    grilla.draw(
+      ctx,
+      dimensiones.DIMENSIONS_GRILLA_X,
+      dimensiones.DIMENSIONS_GRILLA_Y
+    )
+  );
 
   velocidades.velocidadX = 0;
   velocidades.velocidadY = 0;
 
   if (
-    figuraActual.isFinish(grillasOcupadasArray, casillasADibujar, HEIGHT_GAME)
+    figuraActual.isFinish(
+      grillasOcupadasArray,
+      casillasADibujar,
+      dimensiones.HEIGHT_GAME
+    )
   ) {
     figuraActual = figuraSiguiente;
     figuraSiguiente = obtenerFigura(figuras);
@@ -107,9 +125,9 @@ function loop() {
     );
 
     grillasOcupadasArray = eliminarFilaOcupada(
-      HEIGHT_GAME,
+      dimensiones.HEIGHT_GAME,
       grillasOcupadasArray,
-      WIDTH_GAME
+      dimensiones.WIDTH_GAME
     );
   }
 
@@ -123,8 +141,8 @@ setInterval(
     figuraActual.update(
       0,
       velocidades.velocidadYBajada,
-      HEIGHT_GAME,
-      WIDTH_GAME
+      dimensiones.HEIGHT_GAME,
+      dimensiones.WIDTH_GAME
     ),
   1000
 );

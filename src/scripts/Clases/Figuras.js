@@ -62,16 +62,16 @@ export class Figura {
   }
 
   // dibujas las casillas
-  drawCasillas(casillas, color, DIMENSIONS_GRILLA, DIMENSIONS_CUADRO, ctx) {
+  drawCasillas(casillas, color, DIMENSIONS_GRILLA_X, DIMENSIONS_GRILLA_Y, ctx) {
     casillas.forEach((element) => {
       // Establecer el color de relleno
       ctx.fillStyle = color;
       // Dibujar el rectangulo
       ctx.fillRect(
-        element[0] * DIMENSIONS_GRILLA,
-        element[1] * DIMENSIONS_GRILLA,
-        DIMENSIONS_CUADRO,
-        DIMENSIONS_CUADRO
+        element[0] * DIMENSIONS_GRILLA_X,
+        element[1] * DIMENSIONS_GRILLA_Y,
+        DIMENSIONS_GRILLA_X,
+        DIMENSIONS_GRILLA_Y
       );
     });
   }
